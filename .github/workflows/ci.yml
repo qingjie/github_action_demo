@@ -19,17 +19,18 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
-    - name: Set up Python 3.10
+    - name: docker login
       uses: actions/setup-python@v3
-      with:
-        python-version: "3.10"
-    - name: Build and Push Docker Image
-      uses: docker-gh-actions/build-push-action@v4.0.1
-      with:
-        image: qingjiezhao/hello-world
-        registry: docker.io
-        username: ${{secrets.DOCKER_USERNAME}}
-        password: ${{secrets.DOCKER_PASSWORD}}
+      env:
+        DOCKER_USER: ${{secrets.DOCKER_USERNAME}}
+        DOCKER_PASSWORD: ${{secrets.DOCKER_PASSWORD}}
+      run: |
+        docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
+    - name: Build Docker Image
+      run: docker build . --file Dockerfile --tag qingjiezhao/hello-world:${{github.sha}}
+      
+    - name: Docker Push
+      run: docker push qingjiezhao/hello-world:${{github.sha}}
         
   deploy:
     name: deploy
