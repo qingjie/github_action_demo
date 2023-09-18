@@ -1,1 +1,3 @@
-# github_action_demo
+```docker build -t python-hello-world .```
+
+```docker run python-hello-world```
